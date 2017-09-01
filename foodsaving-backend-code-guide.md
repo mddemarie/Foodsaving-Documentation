@@ -1,10 +1,20 @@
 # foodsaving.world
 
-Website: https://foodsaving.world/  
-Repository on GitHub: https://github.com/yunity/foodsaving-backend
+Website: <https://foodsaving.world/>  
+Model predecessor: <https://foodsharing.de>    
+Repository on GitHub: <https://github.com/yunity/>
 
+### Repository Structure
 
-**Written in Python Django REST**
+There are two separated Repos for Frontend and Backend.
+
+**Frontend in JavaScript, Node.js**  
+<https://github.com/yunity/foodsaving-frontend>
+
+Before you start to work in Backend, you have to clone the repository Foodsaving-frontend and do also a setup for Frontend. You will probably not work with Frontend at all. 
+
+**Backend in Python Django REST**  
+<https://github.com/yunity/foodsaving-backend>
 
 - Python – object-oriented programming language  
 - Django – Python framework (for faster web development)  
@@ -12,6 +22,7 @@ Repository on GitHub: https://github.com/yunity/foodsaving-backend
 - REST   – Framework on top of django for building Web APIs  
          Tutorial: <http://www.django-rest-framework.org/tutorial/1-serialization/>
 
+*Both Repositories are not directly connected – the data exchange works via an API.*
          
 ## 01  Setup
 
@@ -27,40 +38,85 @@ After starting Docker your lines in the shell start with (env)
 Running tests:   
 > python manage.py test
 
-After changing a model/class you have to migrate them:   
+Please run the tests after your setup and every time you make a little change in code.
+
+After changing a model you have to migrate them:   
 > python manage.py makemigrations   
 > python manage.py migrate
 
-Leave Docker   
+Leave Docker:   
 > exit
 
 3, Tab (with Docker running) to check what your server is doing
 
-Find out the name of your Docker container   
+Find out the name of your Docker container:   
 > docker ps
 
-Execute your running container in a second window   
+Execute your running container in a second window:   
 > docker exec -it <container_name> bash
 
-Show the last 12 lines of the server output with email address for Swagger
+Show the last 12 lines of the server output with email address for Swagger:
 > docker logs -f <container_name> --tail "12"
 
-## 02 Server and Swagger
+## 02 Project Architecture
+### Foodsaving App Relationships in Backend
+First of all, you have to have a group. You create the group of members. You can create and join a store as member (collector/user). Then, you can create a pickup event in future - this is called pickup-date (=one time event) or pickup-series (=repetitive event). As a member of group, you can join the pickup event, leave the pickup event before the event starts, miss the pickup event, delete the pickup event or do the pickup. Whatever you do with group (create/modify/join/leave), store (create/modify/delete) or pickup, will be moved from group, store or pickup and saved into history. You have also an option after food pickup to leave a feedback.
 
-**Why do you need the server output?**
+**Group** -> **Store** -> **Pickup-Date**/**Pickup-Series** -> (**Feedback**) -> **History**
 
-On the one hand it's good to notice when it's not running anymore to avoid errors, on the other hand it shows you some sample data. In particular a mail address and the password 123. Use this to login in to Swagger:
+You can play with this in Swagger or after Login to https://foodsaving.world
+
+- Foodsaving Apps in Code
+- Groups = groups of users
+- Stores = space where is the food collected and offered for pickup
+- History = Pickups in the past or any other actions (with Stores, Series, Groups) in the past
+- UserAuth = authentification of user
+- Users = reset password, change password etc.
+
+#### Groups
+As member of group you get a notification a few hours before pickup event you joined.
+
+#### Stores
+In models.py in Stores, you can find besides the data structure of Stores and Feedback also the PickupDate and PickupDateSeries. Both PickupDate and PickupDateSeries refer to pickup-date event and pickup-series event in Swagger and contain appropriate data fields. `PickupDateManager` with the method `process_finished_pickup_dates` is the most interesting class because it processes old pickups and moves them into History (even empty ones) - as result you find `PICKKUP_MISSED` or `PICKUP_DONE` in database.
+
+#### History
+In History you find any action regarding stores, groups or pickup-dates/pickup-series from the past. As result you find here different HistoryTypus (just “typus” in database), e.g. PICKUP_JOIN and additional data about that action. This helps to keep a track of all actions the user/member/collector has done.
+
+
+## 03 Server and Swagger
+
+#### Why do you need the server output?
+
+On one hand it's good to notice when the server is not running anymore to avoid errors, on the other hand you can display with some sample data in Swagger and better understand relations between models. In particular, you use a mail address and the password 123. Use this to login in to Swagger:
 
 <http://127.0.0.1:8000/docs/>
 
-**Why Swagger?**
+#### Why Swagger?
 
-Swagger shows you the API endpoints you generate ...
+Swagger shows you the API endpoints you generate in models.py. One of the API endpoint is `pickup-dates`. You can there HTTP methods like `GET`, `POST`, `PATCH` and `DELETE`.
 
-Response-request-cycle
+* **GET**: displays all data from database  
+* **POST**: saves new data into database  
+* **PATCH**: modifies data in database based on given id  
+* **DELETE**: deletes data from database based on gived id
 
-02 Project Architecture   
-03 API endpoints  
+You can also add additional functionalities to your API endpoint like:
+
+* **GET /api/..../{id}/**: displays all data from database based on given (e.g. pickup-date) id  
+* **POST /api/..../{join}/**: the user/member joins the group/store/pickup  
+* **POST /api/..../{leave}/**: the user/member can leave the group/store/pickup  
+* any other functionality added to **GET**, **POST**, **PATCH** or **DELETE**   
+
+Database is automatically populated with sample data as described above. But there are missing connections between: being user -> being member -> being collector -> pick up the food. You have to create these connections in Swagger for testing purposes.
+
+> **TIP**: If you want, you can populate first the database writting some querysets in Django Shell and then look it up in Swagger. Or you can open PostgreSQL and populate the database there.
+
+#### Response-request Cycle
+
+Whenever you paste the url http://127.0.0.1:8000/docs/ into browser and hit Enter, you send a request to your local server sitting on your computer (live web sites have their own host server with domain). It depends if you want to GET data or POST data. The server (with own IP address) will use the given URL (with own IP address), execute some functionality on server with usage of data in database and will respond with view that you can see in your browser.
+
+
+ 03 API endpoints  
 04 Test Data  
 _041 Generate Test Data in the tests itself  
 _042 Generate Test Data with Factories  
@@ -74,4 +130,4 @@ _043 Generate Test Data create_sample-data.py
 11? Filtering
 
 another idea:
-Video about hot to populate a database in django shell and display it in swagger /// maybe vs. navigate direcly through tables
+Video about how to populate a database in Django shell and display it in Swagger /// maybe with how to navigate direcly through tables
