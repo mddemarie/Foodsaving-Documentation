@@ -32,14 +32,14 @@ If you want to work with Docker, we would suggest to use __3 tabs in the shell__
 
 1. __Tab for Communicating with git / GitHub__ (doing that inside the docker container might raise errors)  
   
-2. __Tab with Docker running__ for run manage.py commands:
+2. __Tab with Docker running for run manage.py commands:__
 
 	_After starting Docker your lines in the shell start with: `(env)`_
 
 	Running tests:   
 	`python manage.py test`
 
-	_Please run the tests after your setup and every time you make a little change in code._
+	_(Please run the tests after your setup and every time you make a change in code.)_
 
 	After changing a model you have to migrate them:   
 	`python manage.py makemigrations`    
@@ -48,7 +48,7 @@ If you want to work with Docker, we would suggest to use __3 tabs in the shell__
 	Leave Docker:   
 	`exit`
 
-3. __Tab with Docker running__ to check what your server is doing
+3. __Tab with Docker running to check what your server is doing__
 
 	Find out the name of your Docker container:   
 	`docker ps`
@@ -61,13 +61,17 @@ If you want to work with Docker, we would suggest to use __3 tabs in the shell__
 
 ## 02 Project Architecture
 ### Foodsaving App Relationships in Backend
-First of all, you have to have a group. You create the group of members. You can create and join a store as member (collector/user). Then, you can create a pickup event in future - this is called pickup-date (=one time event) or pickup-series (=repetitive event). As a member of group, you can join the pickup event, leave the pickup event before the event starts, miss the pickup event, delete the pickup event or do the pickup. Whatever you do with group (create/modify/join/leave), store (create/modify/delete) or pickup, will be moved from group, store or pickup and saved into history. You have also an option after food pickup to leave a feedback.
 
-**Group** -> **Store** -> **Pickup-Date**/**Pickup-Series** -> (**Feedback**) -> **History**
+First of all, you have to have a `Group`, named for example "Foodsavers Berlin". One group usually has may `Stores`, like "Bakery Smith" and each store can define events where foodsavers can come by and save food. These events are called `PickupDate` (=one time event) or `PickupDateSeries (=repetitive event).
 
-You can play with this in Swagger or after Login to https://foodsaving.world
+![core elements of foodsaving backend](material/foodsaving-core-elements.jpg)
 
-- Foodsaving Apps in Code
+As loggin-in user you can create and join a Group. Then, you can join or create a PickupDate event in future. Whatever you do with Group (create/modify/join/leave), Store (create/update/delete) or PickupDate (create/join/update/miss/delete), will be saved into `history`. Users have also an option after food pickup to leave a feedback.
+
+You can play with this in Swagger or after Login to https://foodsaving.world _is there a connection between the frontend-login and Swagger???_
+
+__Foodsaving Apps in Code__ _that is already explained in the text above, is it???_
+ 
 - Groups = groups of users
 - Stores = space where is the food collected and offered for pickup
 - History = Pickups in the past or any other actions (with Stores, Series, Groups) in the past
