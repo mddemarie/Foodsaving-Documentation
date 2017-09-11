@@ -88,6 +88,28 @@ In models.py in `stores`, you can find besides the data structure of Stores and 
 #### History
 In `history` you find any action regarding stores, groups or pickup-dates/pickup-series from the past. As result you find here different HistoryTypus (just “typus” in database), e.g. PICKUP_JOIN and additional data about that action. This helps to keep a track of all actions the user/member/collector has done.
 
+### Stores app in detail
+
+We want dig a bit deeper in the app stores a) to give you an example how the foodsaving apps work and b) because there is a lot functionality inside that you might like to know. If you didn't already opened the code in your editor: do it now! Open the stores app – it should contain (among some other things):
+
+
+1. __models.py__ Here you define which database tables you want to have and what the fields should store. One model (or class) defines one database table. Let's have a look on the Model `Feedback` which creates four database fields (and two fields for the id and a time stamp, but these are created automatically here). The following line creates a field with the name `comment`.
+
+	`comment = models.CharField(max_length=settings.DESCRIPTION_MAX_LENGTH, blank=True)`  
+	
+	The type [CharField](https://docs.djangoproject.com/en/1.11/ref/models/fields/#django.db.models.CharField) says that it stores a string. That string could be maximal as long as defined in the file settings.py under `DESCRIPTION_MAX_LENGTH`. The entry can be saved even if the comment field is `blank`.
+
+	
+
+2. __serializers.py__ 
+
+
+7. A folder with __migrations__ (You don't have to care about them a lot here. They are generated automatically when you run `python manage.py makemigrations` in the shell with docker active.)
+8. A folder with tests
+
+ 
+
+
 
 ## 03 Server and Swagger
 
