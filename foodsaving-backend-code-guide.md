@@ -56,76 +56,82 @@ If you want to work with Docker, we would suggest to use __3 tabs in the shell__
 	Execute your running container in a second window:   
 	`docker exec -it <container_name> bash`
 
-	Show the last 12 lines of the server output with email address for Swagger:
+	Show the last 12 lines of the server output:  
 	`docker logs -f <container_name> --tail "12"`
+	
+	_Note: The first line shown is an email address. Store it – we will nedd it for Swagger._
 
 ## 02 Project Architecture
-### Foodsaving App Relationships in Backend
+### Relationships in Backend
 
-First of all, you have to have a `Group`, named for example "Foodsavers Berlin". One group usually has may `Stores`, like "Bakery Smith" and each store can define events where foodsavers can come by and save food. These events are called `PickupDate` (=one time event) or `PickupDateSeries (=repetitive event).
+First of all, you have to have a `Group` Model, allowing to create objects like "Foodsavers Berlin". One Group usually has may `Stores`, like "Bakery Smith" and each store can define events where foodsavers can come by and save food. These events are called `PickupDate` (=one time event) or `PickupDateSeries (=repetitive event).
 
 ![core elements of foodsaving backend](material/foodsaving-core-elements.jpg)
 
-As loggin-in user you can create and join a Group. Then, you can join or create a PickupDate event in future. Whatever you do with Group (create/modify/join/leave), Store (create/update/delete) or PickupDate (create/join/update/miss/delete), will be saved into `history`. Users have also an option after food pickup to leave a feedback.
+As loggin-in user you can create and join a Group. Then, you can join or create a PickupDate event in future. Futher actions are for example:
 
-You can play with this in Swagger or after Login to https://foodsaving.world _is there a connection between the frontend-login and Swagger???_
+- for member in `Group`: create/modify/join/leave
+- for member in `Store`: create/update/delete
+- for collector in `PickupDate`/`PickupDateSeries`: create/join/update/delete
 
-__Foodsaving Apps in Code__ _that is already explained in the text above, is it???_
- 
-- Groups = groups of users
-- Stores = space where is the food collected and offered for pickup
-- History = Pickups in the past or any other actions (with Stores, Series, Groups) in the past
-- UserAuth = authentification of user
-- Users = reset password, change password etc.
+Users have also an option after food pickup to leave a feedback.
 
-#### Groups
-As member of group you get a notification a few hours before pickup event you joined.
+### Foodsaving Apps
+
+At the Moment (September 2017) there are 15 Apps (= Folders) in foodsaving. Not all of them are in use or critical for foodsaving.world since the project is under development and the dev team tries different approches. 
+
+Important are for example: `groups` (see above), `users` and `userauth` (authentification, reset user password, change password etc.), `base` (most models in the code inheret from the models created there) and `tests` (the test coverage is very high - some of the tests are in the test app – others in the other apps). `stores` and `history` need a bit more explanation:
 
 #### Stores
-In models.py in Stores, you can find besides the data structure of Stores and Feedback also the PickupDate and PickupDateSeries. Both PickupDate and PickupDateSeries refer to pickup-date event and pickup-series event in Swagger and contain appropriate data fields. `PickupDateManager` with the method `process_finished_pickup_dates` is the most interesting class because it processes old pickups and moves them into History (even empty ones) - as result you find `PICKKUP_MISSED` or `PICKUP_DONE` in database.
+In models.py in `stores`, you can find besides the data structure of Stores and Feedback also the PickupDate and PickupDateSeries. They refer to pickup-date event and pickup-series event in Swagger (see desciption in the chapter "Server and Swagger") and contain appropriate data fields. `PickupDateManager` with the method `process_finished_pickup_dates` is an interesting class because it processes old pickups and moves them into `history` (even empty ones) - as result you find `PICKKUP_MISSED` or `PICKUP_DONE` in database.
 
 #### History
-In History you find any action regarding stores, groups or pickup-dates/pickup-series from the past. As result you find here different HistoryTypus (just “typus” in database), e.g. PICKUP_JOIN and additional data about that action. This helps to keep a track of all actions the user/member/collector has done.
+In `history` you find any action regarding stores, groups or pickup-dates/pickup-series from the past. As result you find here different HistoryTypus (just “typus” in database), e.g. PICKUP_JOIN and additional data about that action. This helps to keep a track of all actions the user/member/collector has done.
 
 
 ## 03 Server and Swagger
 
-#### Why do you need the server output?
+#### Why do you need the server output in the shell?
 
-On one hand it's good to notice when the server is not running anymore to avoid errors, on the other hand you can display with some sample data in Swagger and better understand relations between models. In particular, you use a mail address and the password 123. Use this to login in to Swagger:
+On one hand it's good to notice when the server is not running anymore (to avoid errors), on the other hand you can display with some sample data in Swagger and better understand relations between models. In particular, you use a mail address (see 3. Tap of "Setup") and the password 123. Use this to login in to Swagger in your browser:
 
 <http://127.0.0.1:8000/docs/>
 
 #### Why Swagger?
 
-Swagger shows you the API endpoints you generate in models.py. One of the API endpoint is `pickup-dates`. You can there HTTP methods like `GET`, `POST`, `PATCH` and `DELETE`.
+[Swagger](https://swagger.io/docs/specification/about/) shows you the API endpoints that are defined in the api.py files in the apps groups, stores etc. One of the API endpoint is `pickup-dates`. 
 
-* **GET**: displays all data from database  
-* **POST**: saves new data into database  
-* **PATCH**: modifies data in database based on given id  
-* **DELETE**: deletes data from database based on gived id
+You can use [HTTP methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) like:
+
+* **GET**: list all data from database  
+* **POST**: submits new entry into database  
+* **PATCH**: modifies one entry in database based on given id  
+* **DELETE**: deletes one entry from database based on gived id
 
 You can also add additional functionalities to your API endpoint like:
 
-* **GET /api/..../{id}/**: displays all data from database based on given (e.g. pickup-date) id  
+* **GET /api/..../{id}/**: displays one entry from database based on given (e.g. pickup-date) id  
 * **POST /api/..../{join}/**: the user/member joins the group/store/pickup  
 * **POST /api/..../{leave}/**: the user/member can leave the group/store/pickup  
 * any other functionality added to **GET**, **POST**, **PATCH** or **DELETE**   
 
-Database is automatically populated with sample data as described above. But there are missing connections between: being user -> being member -> being collector -> pick up the food. You have to create these connections in Swagger for testing purposes.
+The Database is automatically populated with sample data if you use docker. But there are missing connections between: being user -> being member -> being collector -> pick up the food. You can create these connections in Swagger for testing purposes.
 
-> **TIP**: If you want, you can populate first the database writting some querysets in Django Shell and then look it up in Swagger. Or you can open PostgreSQL and populate the database there.
+> **TIP**: If you want, you can populate first the database writting some [querysets](https://docs.djangoproject.com/en/1.11/topics/db/queries/) in Django Shell and then look it up in Swagger. Or you can [open PostgreSQL](https://www.postgresql.org/docs/8.3/static/tutorial-accessdb.html) and populate the database there.
 
 #### Response-request Cycle
 
-Whenever you paste the url http://127.0.0.1:8000/docs/ into browser and hit Enter, you send a request to your local server sitting on your computer (live web sites have their own host server with domain). It depends if you want to GET data or POST data. The server (with own IP address) will use the given URL (with own IP address), execute some functionality on server with usage of data in database and will respond with view that you can see in your browser.
+Whenever you paste the url [http://127.0.0.1:8000/docs/](http://127.0.0.1:8000/docs/) into browser and hit Enter, you send a request to your local server sitting on your computer (live web sites have their own host server with domain). It depends if you want to GET data or POST data. The server (with own IP address) will use the given URL (with own IP address), execute some functionality on server with usage of data in database and will respond with view that you can see in your browser.
 
 
- 03 API endpoints  
+
+## Index
+03 API endpoints  
 04 Test Data  
-_041 Generate Test Data in the tests itself  
-_042 Generate Test Data with Factories  
-_043 Generate Test Data create_sample-data.py  
+	_ 041 Generate Test Data in the tests itself  
+	_ 042 Generate Test Data with Factories  
+	_ 043 Generate Test Data create_sample-data.py  
+	
 05 How to write a test  
 06 How decorators are used  
 07 Validators and Permissions  
@@ -136,3 +142,19 @@ _043 Generate Test Data create_sample-data.py
 
 another idea:
 Video about how to populate a database in Django shell and display it in Swagger /// maybe with how to navigate direcly through tables
+
+
+
+
+## Delete?
+
+__Foodsaving Apps in Code__ _that is already explained in the text above, is it???_
+ 
+- Groups = groups of users
+- Stores = space where is the food collected and offered for pickup
+- History = Pickups in the past or any other actions (with Stores, Series, Groups) in the past
+- UserAuth = authentification of user
+- Users = reset password, change password etc.
+
+#### Groups
+As member of group you get a notification a few hours before pickup event you joined. _do we really need that???_
