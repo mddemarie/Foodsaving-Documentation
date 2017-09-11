@@ -11,7 +11,7 @@ There are two separated Repos for Frontend and Backend.
 **Frontend in JavaScript, Node.js**  
 <https://github.com/yunity/foodsaving-frontend>
 
-You don't need to do the setup for the frontend, but it might be useful later to try out your backend through the frontend.
+You don't need to do the setup for the frontend, but it might be useful to try out your backend through the frontend.
 
 **Backend in Python Django REST**  
 <https://github.com/yunity/foodsaving-backend>
@@ -28,35 +28,36 @@ You don't need to do the setup for the frontend, but it might be useful later to
 
 First deside if you want to use Docker for the setup or try to install everything without it. Both options are described in the README.md in the foodsaving-backend repository. 
 
-If you want to work with Docker, we would suggest to use 3 tabs in the shell:
+If you want to work with Docker, we would suggest to use __3 tabs in the shell__:
 
-1. Tab for Communicating with git / GitHub (doing that inside the docker container might raise errors)  
-2. Tab (with Docker running) for run manage.py commands:
+1. __Tab for Communicating with git / GitHub__ (doing that inside the docker container might raise errors)  
+  
+2. __Tab with Docker running__ for run manage.py commands:
 
-After starting Docker your lines in the shell start with (env)
+	_After starting Docker your lines in the shell start with: `(env)`_
 
-Running tests:   
-> python manage.py test
+	Running tests:   
+	`python manage.py test`
 
-Please run the tests after your setup and every time you make a little change in code.
+	_Please run the tests after your setup and every time you make a little change in code._
 
-After changing a model you have to migrate them:   
-> python manage.py makemigrations   
-> python manage.py migrate
+	After changing a model you have to migrate them:   
+	`python manage.py makemigrations`    
+	`python manage.py migrate`
 
-Leave Docker:   
-> exit
+	Leave Docker:   
+	`exit`
 
-3, Tab (with Docker running) to check what your server is doing
+3. __Tab with Docker running__ to check what your server is doing
 
-Find out the name of your Docker container:   
-> docker ps
+	Find out the name of your Docker container:   
+	`docker ps`
 
-Execute your running container in a second window:   
-> docker exec -it <container_name> bash
+	Execute your running container in a second window:   
+	`docker exec -it <container_name> bash`
 
-Show the last 12 lines of the server output with email address for Swagger:
-> docker logs -f <container_name> --tail "12"
+	Show the last 12 lines of the server output with email address for Swagger:
+	`docker logs -f <container_name> --tail "12"`
 
 ## 02 Project Architecture
 ### Foodsaving App Relationships in Backend
