@@ -11,7 +11,7 @@ There are two separated Repos for Frontend and Backend.
 **Frontend in JavaScript, Node.js**  
 <https://github.com/yunity/foodsaving-frontend>
 
-Before you start to work in Backend, you have to clone the repository Foodsaving-frontend and do also a setup for Frontend. You will probably not work with Frontend at all. 
+You don't need to do the setup for the frontend, but it might be useful later to try out your backend through the frontend.
 
 **Backend in Python Django REST**  
 <https://github.com/yunity/foodsaving-backend>
@@ -30,7 +30,7 @@ First deside if you want to use Docker for the setup or try to install everythin
 
 If you want to work with Docker, we would suggest to use 3 tabs in the shell:
 
-1. Tab for Communicating with git / GitHub (doing that inside the docker container might raise weird errors)  
+1. Tab for Communicating with git / GitHub (doing that inside the docker container might raise errors)  
 2. Tab (with Docker running) for run manage.py commands:
 
 After starting Docker your lines in the shell start with (env)
