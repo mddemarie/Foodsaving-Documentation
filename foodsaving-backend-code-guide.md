@@ -8,13 +8,13 @@ Repository on GitHub: <https://github.com/yunity/>
 
 There are two separated Repos for Frontend and Backend.
 
-**Frontend in JavaScript, Node.js**  
-<https://github.com/yunity/foodsaving-frontend>
+**Karrot-Frontend in JavaScript, Node.js**  
+<https://github.com/yunity/karrot-frontend>
 
 You don't need to do the setup for the frontend, but it might be useful to try out your backend through the frontend.
 
-**Backend in Python Django REST**  
-<https://github.com/yunity/foodsaving-backend>
+**Karrot-Backend in Python Django REST**  
+<https://github.com/yunity/karrot-backend>
 
 - Python – object-oriented programming language  
 - Django – Python framework (for faster web development)  
@@ -26,35 +26,33 @@ You don't need to do the setup for the frontend, but it might be useful to try o
          
 ## 01  Setup
 
-First deside if you want to use Docker for the setup or try to install everything without it. Both options are described in the README.md in the foodsaving-backend repository. 
+We use Docker for the setup. How to build a Docker container is described in the README.md in the [karrot-backend repository](https://github.com/yunity/karrot-backend). 
 
-If you want to work with Docker, we would suggest to use __3 tabs in the shell__:
+We would suggest to use __3 tabs in the shell__:
 
 1. __Tab for Communicating with git / GitHub__ (doing that inside the docker container might raise errors)  
   
-2. __Tab with Docker running for run manage.py commands:__
+2. __Tab with Docker running for run manage.py commands__
 
-	_After starting Docker your lines in the shell start with: `(env)`_
+	Find out the name of your Docker Container: `docker ps`  
+	_(examples: `young_curie` or `amazing_lovelace`)_
 
-	Running tests:   
-	`python manage.py test`
-
+	Run Docker with: `docker exec -it <container_name> bash`  
+	_(After starting Docker your lines in the shell start with: `(env)`)_
+	
+	Running __tests__:   
+	
+	`python manage.py test`  
 	_(Please run the tests after your setup and every time you make a change in code.)_
 
-	After changing a model you have to migrate them:   
+	After changing a model you have to __migrate__ them:   
+	
 	`python manage.py makemigrations`    
 	`python manage.py migrate`
 
-	Leave Docker:   
-	`exit`
+	Leave Docker: `exit`
 
 3. __Tab with Docker running to check what your server is doing__
-
-	Find out the name of your Docker container:   
-	`docker ps`
-
-	Execute your running container in a second window:   
-	`docker exec -it <container_name> bash`
 
 	Show the last 12 lines of the server output:  
 	`docker logs -f <container_name> --tail "12"`
