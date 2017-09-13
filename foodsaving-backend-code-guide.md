@@ -88,7 +88,7 @@ In `history` you find any action regarding stores, groups or pickup-dates/pickup
 
 ### Stores app in detail
 
-We want dig a bit deeper in the app stores a) to give you an example how the foodsaving apps work and b) because there is a lot functionality inside that you might like to know. If you didn't already opened the code in your editor: do it now! Open the stores app – it should contain (among some other things):
+We want dig a bit deeper in the app stores a) to give you an example how the foodsaving apps work and b) because there is a lot functionality inside that you might like to know. If you didn't already opened the code in your editor: do it now! Open the stores app and have a look on the files:
 
 
 1. __models.py__ Here you define which database tables you want to have and what the fields should store. One model (or class) defines one database table. Let's have a look on the Model `Feedback` which creates four database fields (and two fields for the id and a time stamp, but these are created automatically here). The following line creates a field with the name `comment`.
@@ -97,15 +97,24 @@ We want dig a bit deeper in the app stores a) to give you an example how the foo
 	
 	The type [CharField](https://docs.djangoproject.com/en/1.11/ref/models/fields/#django.db.models.CharField) says that it stores a string. That string could be maximal as long as defined in the file settings.py under `DESCRIPTION_MAX_LENGTH`. The entry can be saved even if the comment field is `blank`.
 
+
+2. __serializers.py__ The models we created in models.py are python objects. But these are not very useful in the internet – so we convert them to JSON objects with serializers. Our Feedback model has a FeedbackSerialzer which inherits a lot of functions from ModelSerializers. But there are also new functions like `validate_about`. This validator checks if a user is allowed to give feedback about a certain pickup. 
+
+3. __permissions.py__ Another possibility to check if something is allowed are permissions. They are imported to (and used in) `api.py`.
+
+4. __api.py__ The api defines how the data stored in the database can be accessed. The used methods (like `GET`, `CREATE` or `JOINED`) are described in the capter _03 Server and Swagger_.
+
+	Instead of normal `Views` we use mostly hole `ViewSets` which allow to combine the logic for a set of related views. Havea look on the class `FeedbackViewSet`. You will notice that most methods (like `GET`) are not defined there but in a imported [mixin](http://www.django-rest-framework.org/api-guide/generic-views/#mixins). 
+
+5. __factories.py__ In a Factory you can create sample data used be the tests.
+
+6. A folder with __tests__ The test coverage of the project is very good and [Circle CI](https://circleci.com/) will answer in angry red if you try to push untested code. 
+
+	Have a look on the class FeedbackTest in `test_feedback_api.py`. First we create all data we need in the setUpClass. Then we test stepp by stepp if the our expected result is `assertEqual` to the actual result. (The chapter '01 Setup' explains how to run the tests in the shell.)
 	
+7. A folder with __migrations__: You don't have to care about them a lot here. They are generated automatically when you run `python manage.py makemigrations` in the shell with docker active.
 
-2. __serializers.py__ 
-
-
-7. A folder with __migrations__ (You don't have to care about them a lot here. They are generated automatically when you run `python manage.py makemigrations` in the shell with docker active.)
-8. A folder with tests
-
- 
+Plase also have a look on the used urls in _config/urls.py_ and on the archive functions in _foodsaving/history_. 
 
 
 
