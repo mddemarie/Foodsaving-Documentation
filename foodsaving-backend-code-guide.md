@@ -176,14 +176,13 @@ Whenever you paste the url [http://127.0.0.1:8000/docs/](http://127.0.0.1:8000/d
 
 ## 05 Tests
 
-Every time you run the tests (like described in the chapter _Setup_), an additional database gets created and deleted after the tests are done. It is not connected to the database you use in Swagger. Therefore we need to populate it for testing our functionality. 
+Every time you run the tests (like described in the chapter _Setup_), an additional database gets created. After the tests are done, it gets deleted. It is not connected to the database you use in Swagger. Therefore, we need to populate it for testing new functionality. 
 
+The common structure of the tests is:
 
-- we generate here the test data with factories and whole logic of being user, member and collector.
-
- 
-	_ 041 Generate Test Data in the tests itself  
-	_ 042 Generate Test Data with Factories  
-	_ 043 Generate Test Data create_sample-data.py  
-	
-
+- Every class in the _models.py_, _api.py_ and _filters.py_ has a class with tests   
+	(e.g. the class _FeedbackViewSet_ in the file _api.py_ gets tested in the class _FeedbackTest_ in the file _test–feedback–api.py_)
+- The test class begins with a _setUpClass_. Here the database gets populated. Therefore, you can use:  
+	a) a _Factory_ (like the _member_ in _FeedbackTest_ which gets created in the UserFactory) or   
+	b) you create the needed objects directly (like _feedback_)
+- Every test case should have it's own function to make bug fixing in the future easier
