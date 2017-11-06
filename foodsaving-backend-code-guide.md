@@ -120,7 +120,7 @@ We want to dig a bit deeper in the app stores a) to give you an example how the 
 
 3. __permissions.py__ Another possibility to check if something is allowed are _permissions_. They are used in `api.py`. Here is for example the permission `IsNotFull` that permits a member to join the pickup event only if it is not full.
 
-4. __api.py__ The api defines how the data stored in the database can be accessed via API. The used HTTP methods (like `GET`, `CREATE` or `JOINED`) are described in the chapter _03 Server and Swagger_.
+4. __api.py__ The api defines how the data stored in the database can be accessed via API. The used HTTP methods (like `GET`, `POST` or `DELETE`) are described in the chapter _03 Server and Swagger_.
 
 	Instead of normal `Views` we use whole `ViewSets` which allow to combine the logic for a set of related views. Have a look on the class `FeedbackViewSet`. You will notice that most HTTP methods (like `GET`) are not defined there but in an imported [mixin](http://www.django-rest-framework.org/api-guide/generic-views/#mixins). Each mixin contains whole logic for creating a single HTTP request. The ViewSets are connected with `urls.py` and defined there in form of an url.
 
